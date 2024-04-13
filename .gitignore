@@ -1,0 +1,7 @@
+*.xlsx
+!example.xlsx
+/stuff
+/output
+/img/*
+logs.log
+config.txt
