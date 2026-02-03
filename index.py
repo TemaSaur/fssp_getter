@@ -4,7 +4,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from time import sleep, time
 from datetime import datetime
-from solver import test_current
 import os
 import pandas as pd
 import base64
@@ -108,22 +107,23 @@ class FsspGetter:
 		rows = table.find_elements(By.TAG_NAME, 'tr')
 		for row in rows[1:]:
 			cells = row.find_elements(By.TAG_NAME, 'td')
+			if len(cells) <= 1:
+				continue
 			self.data.append(format_table_row_data(cells))
 
 	def wait_for_captcha_input(self):
 		while True:
 			sleep(.1)
-			value = self.driver.find_element(By.ID, 'captcha-popup-code').get_attribute('value')
+			value = self.driver.find_element(By.ID, 'capcha-popup').get_attribute('value')
 			if self.driver.find_element(By.ID, 'ncapcha-submit').is_displayed():
 				continue
-			value = self.driver.find_element(By.ID, 'captcha-popup-code')
+			value = self.driver.find_element(By.ID, 'capcha-popup')
 			try:
 				self.captcha_value = value.get_attribute('value')
 			except:
 				pass
-			self.captcha_data = self.driver.find_element(By.ID, 'capchaVisual').get_attribute('src')
+			self.captcha_data = self.driver.find_element(By.ID, 'capchaVisualImage').get_attribute('src')
 			return
-	
 	def wait_for_captcha_result(self):
 		while True:
 			sleep(.25)
@@ -133,7 +133,6 @@ class FsspGetter:
 				continue
 			except:
 				break
-			
 		sleep(.04)
 		try:
 			self.driver.find_element(By.CLASS_NAME, 'b-form__label--error')
@@ -145,14 +144,12 @@ class FsspGetter:
 
 	def save_captcha(self, success):
 		save_image(f'{SAVE_PATH}/{int(success)}{self.captcha_value}.jpg', self.captcha_data)
-			
 	def process_ip(self, row):
 		self.goto_menu(True)
 		sleep(1.5)
 		input_el = self.driver.find_element(By.ID, 'input04')
 		input_el.send_keys(row['ИП'])
 		sleep(.5)
-	
 	def process_pl(self, row):
 		self.goto_menu()
 		self.fill_data(row)
@@ -188,7 +185,6 @@ if __name__ == '__main__':
 	df = get_data(input_filename)
 	getter.set_data(df)
 	try:
-		None + 2
 		getter.iterate()
 		print('Всё успех')
 	except:
@@ -202,3 +198,4 @@ if __name__ == '__main__':
 		res = pd.DataFrame(getter.data)
 		res.to_excel(os.path.join(get_output_path(), f'{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx'), index=False)
 		getter.driver.close()
+This paste expires in <1 hour. Public IP access. Share whatever you see with others in seconds with Context.Terms of ServiceReport this
