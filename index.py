@@ -44,10 +44,16 @@ def format_table_row_data(cells):
 
 
 def format_bad_data(row):
-	return {
-		'Должник': f'{row["Фамилия"]} {row["Имя"]} {row["Отчество"]}\n{row["Регион"]}\n{row["Дата рождения"]}',
-		'Исполнительное производство': 'Не найдено'
-	}
+	try:
+		return {
+			'Должник': f'{row["Фамилия"]} {row["Имя"]} {row["Отчество"]}\n{row["Регион"]}\n{row["Дата рождения"]}',
+			'Исполнительное производство': 'Не найдено'
+		}
+	except:
+		return {
+			'Должник': f'{row["ИП"]}',
+			'Исполнительное производство': 'Не найдено'
+		}
 
 
 # #capchaVisual
@@ -100,7 +106,7 @@ class FsspGetter:
 			table = self.driver.find_element(By.CSS_SELECTOR, '.results-frame table')
 		except:
 			not_found = self.driver.find_element(By.CSS_SELECTOR, '.b-search-message')
-			self.data.append(format_bad_data(row+2))
+			print(row);self.data.append(format_bad_data(row))
 			return
 		rows = table.find_elements(By.TAG_NAME, 'tr')
 		for row in rows[1:]:
@@ -112,10 +118,10 @@ class FsspGetter:
 	def wait_for_captcha_input(self):
 		while True:
 			sleep(.1)
-			value = self.driver.find_element(By.ID, 'capcha-popup').get_attribute('value')
+			value = self.driver.find_element(By.ID, 'captcha-popup').get_attribute('value')
 			if self.driver.find_element(By.ID, 'ncapcha-submit').is_displayed():
 				continue
-			value = self.driver.find_element(By.ID, 'capcha-popup')
+			value = self.driver.find_element(By.ID, 'captcha-popup')
 			try:
 				self.captcha_value = value.get_attribute('value')
 			except:
@@ -141,7 +147,7 @@ class FsspGetter:
 			return True
 
 	def save_captcha(self, success):
-		save_image(f'{SAVE_PATH}/{int(success)}{self.captcha_value}.jpg', self.captcha_data)
+		pass
 	def process_ip(self, row):
 		self.goto_menu(True)
 		sleep(1.5)
