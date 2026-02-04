@@ -13,9 +13,7 @@ SAVE_PATH = './img'
 
 
 def save_image(filename, data):
-	img_data = data.replace('data:image/jpeg;base64,', '', 1).encode('ascii')
-	with open(filename, "wb") as f:
-		f.write(base64.decodebytes(img_data))
+	pass
 
 
 def save_temp(data):
