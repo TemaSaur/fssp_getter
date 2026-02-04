@@ -198,4 +198,3 @@ if __name__ == '__main__':
 		res = pd.DataFrame(getter.data)
 		res.to_excel(os.path.join(get_output_path(), f'{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx'), index=False)
 		getter.driver.close()
-This paste expires in <1 hour. Public IP access. Share whatever you see with others in seconds with Context.Terms of ServiceReport this
